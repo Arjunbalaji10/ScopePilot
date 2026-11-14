@@ -1,83 +1,110 @@
-# User Journeys
+# ScopePilot — Core User Journeys
 
-These journeys are **Proposed** and depend on confirmation of the product hypothesis and roles.
+These journeys describe the approved product direction. They are demo journeys, not proof that the workflows have been implemented.
 
-## Journey 1 — Create and approve the initial baseline
+## 1. Client submits a requirement
+**Actor:** Client
 
-**Actor:** Editor, then Approver  
-**Precondition:** The actor can access a project workspace.
+1. Client opens the project view they were invited to.
+2. Client reviews project context and submits a requirement with expected outcome and relevant detail.
+3. Requirement is marked Needs Clarification until reviewed.
+4. Team members ask focused questions in the requirement discussion.
+5. Team Leader reviews/refines it and resolves ambiguity.
+6. Owner/Admin includes it in the approved scope baseline when ready.
+7. Client can see its status and the agreed version.
 
-1. Editor creates a project.
-2. Editor adds structured scope items and estimate inputs.
-3. The backend validates inputs and returns deterministic totals plus validation findings.
-4. Editor corrects blocking findings and submits the draft.
-5. Submission captures a candidate snapshot; later draft edits must not alter what the approver sees.
-6. Approver reviews scope, totals, rule-set version, and any optional grounded explanation.
-7. Approver explicitly approves or rejects, optionally/mandatorily giving a rationale (unresolved).
-8. Approval atomically creates baseline version 1 and an audit event. Rejection returns the candidate to a defined state (unresolved).
+**Outcome:** A clear requirement becomes a traceable commitment only after approval.
 
-**Guardrails:** AI cannot submit or approve. A calculation failure blocks submission. Approval acts on an exact version, not “latest” mutable data.
+## 2. Team plans and tracks delivery
+**Actors:** Team Leader, Developer/Member
 
-## Journey 2 — Propose a scope change
+1. Team Leader links one or more tasks to each approved requirement.
+2. Tasks receive PERT estimates, primary assignee (or remain unassigned), priority and Finish-to-Start dependencies.
+3. ScopePilot calculates planning effort and a calendar-based schedule projection.
+4. Developer views assigned work, prerequisites and expected effort.
+5. Developer updates status and actual effort, or reports a blocker/assistance need.
+6. Team Leader reviews workload, blockers and project risks; any assignment or schedule change is a deliberate human action.
+7. Dashboard reflects current delivery evidence.
 
-**Actor:** Editor  
-**Precondition:** An approved current baseline exists.
+**Outcome:** Team can trace progress and risks from tasks back to agreed requirements.
 
-1. Editor starts a change request pinned to the current baseline version.
-2. Editor adds, changes, or marks scope items for removal in the proposal.
-3. The backend builds a deterministic before/after comparison.
-4. The backend calculates revised totals and deltas using the approved rule-set version policy (policy unresolved).
-5. The UI displays changed fields, impact findings, and calculation metadata separately from generated explanation.
-6. Editor submits the exact proposal version for approval.
+## 3. Team assesses a proposed scope change
+**Actors:** Client or authorized team member; Team Leader; Owner/Admin
 
-**Failure paths:** Invalid values return field errors. If the base baseline is no longer current, submission or approval fails with a stale-baseline conflict until the rebase policy is resolved.
+1. A change request is created against the current approved baseline.
+2. Requester describes the requested outcome and reason; request is classified (for example, enhancement or new feature).
+3. ScopePilot identifies affected requirements, tasks and dependencies.
+4. Deterministic calculations estimate potential effort and schedule/capacity effects using current planning inputs.
+5. The UI presents the before/after view, assumptions, affected commitments and risks.
+6. Team Leader reviews technical feasibility, effort, workload and delivery impact.
+7. Owner/Admin reviews business priority and commitment implications.
+8. If deliverables, cost or agreed dates change, the client confirms the revised agreement.
+9. If an approver raises a concern, the request enters Needs Resolution; the requester may revise and resubmit or consider alternatives.
+10. Only after all required approvals does ScopePilot create a new immutable baseline and record the decision.
 
-## Journey 3 — Decide a change request
+**Outcome:** People see trade-offs before committing. Impact is a projection, not a guarantee.
 
-**Actor:** Approver
+## 4. Employee reports a blocker or workload concern
+**Actor:** Developer/Member
 
-1. Approver opens a submitted request.
-2. The UI shows the pinned baseline, proposal, deterministic delta, and any warnings.
-3. Approver may request an AI explanation. The request includes only allow-listed stored facts and findings.
-4. The explanation is labeled non-authoritative and cites finding identifiers; absence/failure does not block the decision.
-5. Approver approves or rejects the exact submitted revision.
-6. Approval atomically creates the next baseline version, makes it current, closes the request, and records the decision. Rejection records the decision without changing the baseline.
+1. Employee opens an assigned task and selects Unable to Complete, Need Assistance, Request Extension or Report Blocker.
+2. Employee records the reason and remaining effort/expected delay if known.
+3. ScopePilot records the report and notifies the Team Leader.
+4. Team Leader reviews, assists, requests clarification or considers a schedule/assignment change.
+5. If project commitments may change, ScopePilot routes the proposed change through impact assessment and required approvals.
+6. If no response occurs within the configured response period, the concern escalates to Admin/Owner.
+7. Employee can see report status and resolution.
 
-**Guardrails:** No AI output can invoke the decision endpoint. A stale revision returns HTTP 409. The actor and timestamp come from trusted server context, not client fields.
+**Guardrails:** Reporting does not penalize the employee, automatically change a deadline or automatically reassign work.
 
-## Journey 4 — Inspect history and reproduce a finding
+## 5. Owner/Admin monitors commitments and risks
+**Actor:** Owner/Admin
 
-**Actor:** Viewer
+1. Owner/Admin opens the workspace/project dashboard.
+2. Dashboard highlights milestone status, target-date projection, high-priority risks, workload conflicts and pending business approvals.
+3. Owner/Admin opens an item to inspect supporting requirements, tasks, dependencies and decisions.
+4. Owner/Admin approves/rejects business commitments or requests clarification/revision.
+5. Important decisions remain in project history.
 
-1. Viewer opens project history.
-2. Viewer selects a baseline or change-request version.
-3. The system shows immutable input snapshots, decision history, calculation outputs, and rule-set version.
-4. An authorized user may request recalculation for diagnosis, but historical recorded results are not overwritten; comparison behavior is unresolved.
+**Outcome:** Business oversight is based on traceable delivery evidence rather than unsupported risk scores.
 
-## Journey 5 — Work without AI
+## 6. Client follows delivery and confirms changes
+**Actor:** Client
 
-**Actor:** Any user
+1. Client views milestones, progress, approved requirements and agreed dates.
+2. Client participates in authorized requirement/change-request discussions.
+3. Client sees the assessed consequences of a proposed change.
+4. Client confirms revised deliverables/cost/dates when their agreement changes.
+5. Client can view the decision and resulting agreed baseline.
 
-1. AI is disabled, unconfigured, or unavailable.
-2. All project, scope, calculation, comparison, submission, approval, rejection, and history functions continue.
-3. Explanation controls are absent or show a non-blocking unavailable state.
+**Guardrails:** Client cannot view private employee discussions or internal estimates/assignments.
 
-## Cross-journey UX requirements — Proposed
+## 7. Team handles deployment and post-deployment work
+**Actors:** Team Leader, Owner/Admin, Client
 
-- Always distinguish draft, submitted, approved, rejected, superseded, and stale states.
-- Display authoritative numeric findings before explanatory prose.
-- Confirm consequential actions and describe their effects.
-- Disable decisions when data is invalid, stale, or still calculating.
-- Never imply that AI has approved, verified, or guaranteed a result.
-- Preserve user-entered drafts after recoverable validation errors.
+1. Team tracks release through Development, Testing, Ready for Deployment, Deployed or Rolled Back.
+2. Release records link to included approved requirements/tasks.
+3. Client acceptance or concerns are recorded where required.
+4. A defect, incident, enhancement or new feature is classified and assessed according to the agreement and urgency.
+5. Post-deployment work uses a controlled change cycle; it does not silently rewrite the deployed baseline.
+6. Project closes after the simplified closure conditions are met; closed history remains read-only.
 
-## Unresolved journey questions
+## 8. AI explains delivery evidence
+**Actor:** Authorized team member
 
-- Is there a separate project owner or administrator?
-- Can the author approve their own submission?
-- Can multiple open change requests target the same baseline, and how are they rebased?
-- Can a submitted request be withdrawn or edited, or must a new revision be created?
-- Is rejection rationale required? Can a rejected request be resubmitted?
-- What does project archival/deletion do to history?
-- Are notifications, export, and comment threads excluded from V1.0?
+1. User requests an explanation of a calculated impact or risk.
+2. ScopePilot provides only relevant, approved project facts and deterministic findings to the optional AI layer.
+3. AI returns a concise explanation and possible options, referencing the supplied evidence.
+4. UI distinguishes facts, calculated projections and AI suggestions.
+5. Human user makes the decision.
 
+**Guardrails:** AI cannot calculate authoritative values, approve a change, alter project state or reassign tasks. Core workflows continue when AI is unavailable.
+
+## Cross-journey experience requirements
+- Make role and visibility boundaries understandable.
+- Keep requirement, task, change request, risk, release and decision history linked.
+- Distinguish draft, submitted, approved, rejected and Needs Resolution states.
+- Show assumptions and evidence beside projected impact.
+- Confirm consequential actions and describe their effect on the baseline.
+- Avoid unsupported probabilities or guarantees.
+- Use fictional data and label simulated metrics.
