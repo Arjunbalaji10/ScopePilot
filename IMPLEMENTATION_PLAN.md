@@ -1,85 +1,74 @@
-# Implementation Plan
+# ScopePilot — Implementation Plan
 
-No application implementation is authorized by this Phase 0 document. This plan begins only after the relevant decision gates are approved.
+## Delivery objective
+Build a coherent, demonstrable product experience that communicates the approved ScopePilot value proposition. This is a portfolio prototype, not a production launch. Prioritize user journeys and PM evidence over breadth of engineering.
 
-## Guiding sequence
+## Guiding principles
+- Product and UX decisions lead implementation.
+- Use the approved free/local-first stack and one modular monolith.
+- Build the smallest end-to-end slice before secondary features.
+- Deterministic calculations are authoritative; AI remains optional.
+- Use fictional seeded data and a repeatable demo reset.
+- Do not add infrastructure/features merely to increase apparent complexity.
+- Report only work actually completed and verified.
 
-Build one vertical slice at a time through the modular monolith. Establish deterministic rules and approval integrity before optional AI. Do not create infrastructure for hypothetical scale.
+## Stage 1 — Documentation baseline
+**Status:** In progress.
+- Consolidate approved product decisions.
+- Align PRD, V1 scope, user journeys and technical documents.
+- Record implementation-specific assumptions without reopening settled product decisions.
+**Exit criteria:** documents tell one consistent product story; stale unresolved labels no longer contradict approved decisions.
 
-## Phase 0 — Product and architecture decisions
+## Stage 2 — UX structure and wireframes
+**Next after documentation alignment.**
+- Define information architecture and role-aware navigation.
+- Map the flagship e-commerce agency scenario end-to-end.
+- Prioritize screens: demo entry/workspace, dashboard, project overview, requirements/clarification, task board, change request, impact assessment, approval review, client view and baseline history.
+- Add secondary screens only as needed: risk register, employee concern, notifications, release and closure.
+- Create low-fidelity wireframes annotated with decisions, visibility rules, states and empty/error conditions.
+- Review whether a first-time viewer understands the product without narration.
+**Exit criteria:** core flows and screen responsibilities are clear; key trade-offs are documented.
 
-**Deliverables:** the ten Phase 0 documents, approved product definition/scope, formula specification with golden examples, identity/approval policy, initial ADRs, and measurable acceptance criteria.
+## Stage 3 — Clickable prototype
+- Build a navigable prototype with free tools.
+- Use realistic fictional data and label simulated content.
+- Demonstrate requirement → task plan → baseline → change request → impact → approvals → revised baseline.
+- Show role differences and client/internal visibility.
+- Use deterministic mock calculations if backend calculation logic is not implemented; label them as simulated.
+**Exit criteria:** a reviewer can complete the flagship scenario and understand the differentiator.
 
-**Exit gate:** U-01 through U-08 and U-10 are resolved; AI may remain excluded/disabled if U-09 is unresolved. Product and technical owners explicitly approve proposed requirements promoted to approved.
+## Stage 4 — Functional demo foundation
+- Set up React/TypeScript frontend, FastAPI backend and PostgreSQL local environment.
+- Pin free/open-source dependency versions and document local setup.
+- Add only identity/workspace/project structure required by the demo.
+- Seed fictional demo data and provide reset.
+- Add automated checks for implemented paths.
+**Exit criteria:** clean setup and repeatable local run are verified; no paid service required.
 
-## Phase 1 — Engineering foundation
+## Stage 5 — Core delivery workflow
+- Implement requirements and clarification.
+- Implement tasks, PERT estimates, Finish-to-Start dependencies and progress.
+- Implement deterministic schedule/capacity findings with visible assumptions.
+- Implement immutable baseline and version history.
+- Implement change request, impact comparison, technical/business approval and client confirmation.
+- Add audit history for consequential actions.
+**Exit criteria:** core story works end-to-end with tests for calculations, permissions and baseline integrity.
 
-- Create `frontend/` and `backend/` with selected free/open-source toolchains.
-- Add environment validation, formatting, linting, type checks, tests, and migration tooling.
-- Add local PostgreSQL orchestration and documented configuration.
-- Establish API error envelope, request IDs, health endpoints, and CI.
-- Record ADRs for authentication, persistence stack, package managers, and API concurrency/idempotency.
+## Stage 6 — Secondary demo capabilities
+Prioritize based on remaining time/value: risk register; employee concerns/escalation; in-app notifications; release tracking/client acceptance/closure; contextual discussions; illustrative KPI dashboard. Do not implement every secondary capability if it weakens the core story.
 
-**Exit gate:** clean checkout setup works; empty app health/readiness and one database migration are actually verified; no business behavior is claimed.
+## Stage 7 — Optional AI explanation
+- First evaluate whether template-generated explanations meet the need.
+- If useful and still no-cost/privacy-appropriate, add an optional provider adapter.
+- Ground outputs in supplied findings; label suggestions; test unsupported claims and AI unavailability.
+- No tools, write access, approval authority or autonomous actions.
+This stage can be omitted without making the core product incomplete.
 
-## Phase 2 — Projects, scope drafts, and calculation engine
+## Stage 8 — Portfolio packaging
+Prepare a case study covering problem, target users, hypothesis, discovery evidence, strategy, prioritization, key decisions, wireframes, prototype, metrics and trade-offs. Record what is functional, simulated and out of scope. Capture a short walkthrough. Do not claim production readiness or customer impact.
 
-- Implement project access boundary and project metadata.
-- Implement draft scope editing and validation.
-- Implement pure, versioned deterministic calculation rules from approved examples.
-- Add unit/property/boundary tests and backend contract tests.
-- Render authoritative findings in the frontend.
+## Validation approach
+Review each journey against acceptance criteria. Test deterministic calculations with normal/boundary examples; authorization and client/internal visibility; baseline immutability and approval transitions; frontend states/navigation; clean local setup and demo reset. Maintain a verification log with command, environment, result and date.
 
-**Exit gate:** every approved golden example passes; invalid input and rounding boundaries are covered; frontend does not become the authority.
-
-## Phase 3 — Baseline submission and approval
-
-- Freeze exact submission snapshots.
-- Implement permission checks, optimistic concurrency, transactional decisions, immutable baseline versions, and audit events.
-- Add integration tests for approve/reject, retry/idempotency, unauthorized access, stale versions, and rollback.
-
-**Exit gate:** baseline cannot become effective without a valid human decision; audit/baseline consistency is demonstrated by tests.
-
-## Phase 4 — Change requests and impact comparison
-
-- Implement proposal editing and immutable submitted revisions.
-- Produce field-level diff, recalculation, delta findings, and stale-baseline detection.
-- Apply approved concurrency/rebase policy.
-- Create new baseline atomically on approval.
-
-**Exit gate:** add/modify/remove cases and concurrent-change scenarios meet approved examples and lifecycle rules.
-
-## Phase 5 — History and release hardening
-
-- Add baseline/change/decision history views.
-- Complete authorization review, accessibility checks, browser checks, performance measurement, migration rehearsal, and backup/restore procedure for the selected deployment.
-- Finalize operations, deployment, and incident documentation.
-
-**Exit gate:** release checklist evidence exists; unresolved decisions affecting shipped behavior are zero.
-
-## Phase 6 — Optional grounded explanations
-
-This phase is skipped unless U-09 is approved.
-
-- Start with deterministic template explanations if they meet the user need.
-- If a model is justified, implement only the evidence adapter, output validation, labeling, logging policy, timeouts, and graceful fallback.
-- Evaluate against a reviewed fixture set for unsupported numbers, missing/incorrect finding references, prompt injection in user fields, privacy leakage, and availability failure.
-
-**Exit gate:** disabling AI changes no authoritative result or decision workflow; evaluated output meets an owner-approved threshold.
-
-## Validation strategy
-
-- **Domain unit tests:** pure calculations and lifecycle policies.
-- **Property/boundary tests:** determinism, numeric ranges, rounding, and aggregation invariants.
-- **Database integration tests:** constraints, migrations, transactions, concurrency, and rollback using PostgreSQL (not an incompatible substitute).
-- **API contract tests:** OpenAPI shapes, error codes, authorization, idempotency.
-- **Frontend tests:** critical state rendering and user interactions.
-- **End-to-end tests:** create → calculate → submit → approve; propose → compare → decide; AI unavailable.
-- **Manual checks:** accessibility, content clarity, consequential-action confirmation, and recovery instructions.
-
-Tests must be reported as passing only when run in the stated environment. A checklist or planned test is not evidence.
-
-## Work-item completion definition — Proposed
-
-A work item is done when approved acceptance criteria are met, automated tests are added and run, formatting/lint/type checks pass, migrations and API changes are documented, guardrails are reviewed, and no new unresolved product decision is silently encoded.
-
+## Current checkpoint
+Stage 1 documentation alignment is underway. PRD, V1 scope, user journeys, decision register and README have been updated. Technical documents are being reconciled. No application implementation or test completion is implied.
