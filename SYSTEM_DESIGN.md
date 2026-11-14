@@ -1,106 +1,79 @@
-# System Design
+# ScopePilot — System Design
 
-## 1. Architecture status
+## 1. Design intent
+ScopePilot is a portfolio demonstration and functional prototype. Use a simple free/local-first modular monolith. Architecture supports the user journeys and explainable delivery-impact workflow; it is not an exercise in infrastructure complexity.
 
-The modular-monolith style and primary technologies are **Approved**. Module boundaries, deployment details, and supporting libraries are **Proposed**.
+## 2. Approved technology direction
+- Frontend: React, TypeScript, Vite, Tailwind CSS, shadcn/ui, React Router and TanStack Query; Recharts only where useful.
+- Backend: Python, FastAPI, Pydantic and SQLAlchemy.
+- Database: PostgreSQL with Alembic migrations.
+- Local development: Docker Compose where useful.
+- Testing: pytest, Vitest, React Testing Library and Playwright where proportionate.
+- Optional AI: provider-independent adapter; local Ollama or a free provider only if no-cost and privacy-appropriate.
+- Source control/automation: Git, GitHub and free GitHub Actions usage where available.
+Pin compatible versions when implementation begins. Do not add paid dependencies or services.
 
-## 2. Context and containers
+## 3. System context
+Browser → React + TypeScript application → FastAPI JSON API (single modular monolith) → PostgreSQL. An optional AI explanation adapter is disabled by default.
 
-```text
-Browser
-  └── React + TypeScript single-page application
-        └── JSON/HTTP API
-              └── FastAPI modular monolith
-                    ├── PostgreSQL
-                    └── Optional AI adapter (disabled by default; provider unresolved)
-```
+The browser never connects directly to PostgreSQL or an AI provider. Backend owns authorization, validation, deterministic calculations, workflow transitions and audit records.
 
-The browser never connects directly to PostgreSQL or an AI provider. The backend is the authority for validation, calculations, state transitions, authorization, and evidence construction.
+## 4. Logical backend modules
+| Module | Responsibility |
+|---|---|
+| Identity & Access | Email/password identity if implemented, workspace membership, project/client access |
+| Workspaces & Projects | Workspace isolation, project metadata and lifecycle |
+| Requirements | Requirement capture, clarification and approval state |
+| Delivery Planning | Tasks, assignments, PERT estimates, dependencies, calendar and schedule |
+| Capacity & Concerns | Workload visibility, employee reports and escalation |
+| Change Management | Change lifecycle, revisions, classification and impact assessment |
+| Approvals & Baselines | Technical/business/client decisions and immutable versions |
+| Risks & Releases | Risk register, release tracking, acceptance and closure |
+| Communication | Contextual discussion and in-app notifications |
+| Intelligence | Deterministic rules, findings and optional AI explanations |
+| Audit | Append-only consequential action history |
 
-## 3. Backend modules — Proposed
+These are boundaries inside one codebase/runtime, not separate services. Avoid elaborate abstractions without a real need.
 
-| Module | Responsibility | Must not own |
-|---|---|---|
-| Identity & Access | Trusted actor context, roles, authorization | Product calculations |
-| Projects | Project lifecycle and membership boundary | Approval decisions |
-| Scope | Draft scope items and validation | AI prompts |
-| Baselines | Immutable approved snapshots and current-version pointer | Draft editing |
-| Changes | Proposed diffs, revisions, submission lifecycle | Calculation formulas |
-| Calculations | Pure deterministic rules, aggregation, findings, rule-set version | Database writes or AI |
-| Approvals | Transition policy, optimistic concurrency, decisions | Rendering explanations |
-| Explanations | Evidence payload and optional provider adapter | Authority or state transitions |
-| Audit | Append-only business event record | Mutable operational logging |
+## 5. Layering
+FastAPI routes/Pydantic schemas → application use cases and transaction boundaries → domain rules and pure calculation functions → SQLAlchemy repositories/PostgreSQL. Optional AI sits behind an adapter.
 
-Modules live in one codebase and one runtime. Each exposes application-level interfaces; API handlers do not reach into another module's database implementation. This is boundary discipline, not a mandate for elaborate dependency-injection frameworks.
+Transport schemas are not database entities. Calculation functions accept explicit inputs and return structured outputs without I/O/model calls. Authorization is checked server-side. Database constraints protect critical invariants. Approval/baseline transitions run in a transaction.
 
-## 4. Layers — Proposed
+## 6. Deterministic delivery calculation
+1. Validate estimates, task status, dependencies, assignments and calendar inputs.
+2. Calculate PERT task estimate: (O + 4M + P) / 6.
+3. Calculate planned effort from task estimates.
+4. Build a valid Finish-to-Start dependency order and reject cycles.
+5. Calculate schedule projection against workspace working days/hours and remaining effort.
+6. Compare projected completion with target date.
+7. Evaluate workload against available capacity.
+8. Return structured findings with affected requirement/task references, assumptions and calculation version.
 
-```text
-API routes / schemas
-        ↓
-Application use cases and transaction boundaries
-        ↓
-Domain entities, policies, pure calculations
-        ↓
-PostgreSQL repositories and optional external adapters
-```
+The formula and dependency rules are approved at product level. Exact rounding, partial-day allocation, resource capacity allocation and thresholds need a short calculation specification and golden examples before implementation. A schedule projection is not a guarantee.
 
-- Pydantic request/response models are transport types, not database entities.
-- Domain calculation functions accept explicit inputs and return results without I/O, current-time reads, random values, or model calls.
-- Database constraints enforce invariants that must survive application defects.
-- Cross-module state transitions run in a single PostgreSQL transaction.
-
-## 5. Frontend structure — Proposed
-
-Organize by feature (`projects`, `scope`, `baselines`, `changes`, `approvals`, `history`) with shared UI and API-client infrastructure. Server state is not duplicated into a global client store without a demonstrated need. The UI may preview calculations for responsiveness only if clearly labeled; backend results remain authoritative.
-
-## 6. Authoritative calculation flow
-
-1. API validates shape and type.
-2. Application use case loads the exact version and checks access/state.
-3. Domain validation normalizes approved inputs.
-4. A pure calculation engine applies a named `rule_set_version`.
-5. The backend stores or returns structured findings with input fingerprint and version.
-6. The frontend renders those findings without recomputing authority.
-
-An approved formula specification and golden examples are prerequisites. Hash algorithm and canonical serialization are unresolved.
-
-## 7. Approval transaction
-
-An approval request supplies the submitted revision/version. In one transaction the backend locks or conditionally updates the request, verifies its baseline is current, records the decision, creates the immutable baseline snapshot, advances the current-baseline pointer, and appends an audit event. Any failure rolls back all effects. Repeated requests use an idempotency strategy still to be selected.
+## 7. Scope-change impact flow
+Pin request to a baseline; freeze the submitted revision; identify affected requirements, tasks and downstream dependencies; calculate potential effort, schedule, capacity and risk effects; show assumptions, missing inputs and affected commitments; collect Team Leader technical review, Owner/Admin business approval and client confirmation when their agreement changes. Create a new immutable baseline only after required approvals. If the baseline changes after assessment, mark the assessment stale and require recalculation/review.
 
 ## 8. AI boundary
+AI is optional, advisory and disabled by default. It may summarize/explain supplied findings and suggest options. It must not calculate authoritative values, access unrestricted database content, use write tools or change project state. Provide template-based fallback. If a model is enabled, minimize data, record provider/model/template version, validate references and label output.
 
-AI is an optional adapter behind the `Explanations` module. Its input is a versioned evidence envelope containing only approved fields, structured diff, deterministic findings, and display-safe metadata. Its output is untrusted text.
+## 9. Frontend organization
+Organize by workspace, dashboard, projects, requirements, tasks, change requests, impact review, approvals, client view, risks, releases and history. Reuse navigation, forms, status indicators and API client. Role-aware navigation is not authorization; backend enforces permissions. Use charts only when they clarify delivery/product outcomes.
 
-Required controls before enabling it:
+## 10. Security and privacy baseline
+- Never store plaintext passwords or Gmail account passwords.
+- Hash application passwords with Argon2id if email/password auth is implemented.
+- Prefer secure server-managed sessions/cookies; protect cookie-authenticated writes against CSRF.
+- Scope every query/mutation to authorized workspace/project access.
+- Separate client-visible data from internal notes, estimates and assignments.
+- Validate inputs and use parameterized database access.
+- Keep secrets out of source control and browser bundles.
+- Minimize logs and AI payloads; do not send confidential project information to external models without an approved basis.
+- Use fictional demo data.
 
-- approved free/local provider and model;
-- data-handling and retention review;
-- prompt/model version recording;
-- schema or citation validation against supplied finding IDs;
-- timeouts and size limits;
-- no tools, write endpoints, database credentials, or decision capability;
-- visible disclaimer and graceful fallback.
+## 11. Local setup and deployment boundary
+Local-first development is the default. Docker Compose may run PostgreSQL and the app locally. Production deployment is not required for the portfolio objective. Do not introduce Redis, Kafka, microservices, Kubernetes, vector databases, worker fleets, enterprise observability or paid hosting without a demonstrated requirement.
 
-Template-based explanations are a valid zero-cost fallback and may be preferable for V1.0.
-
-## 9. Deployment — Proposed minimum
-
-One static frontend artifact, one FastAPI process image/application, and one PostgreSQL instance. Local development may use Docker Compose. Production hosting is unresolved. Do not add Redis, a message broker, worker service, object store, vector store, or orchestration platform until a measured requirement justifies it.
-
-## 10. Security and operations baseline — Proposed
-
-- Same-site secure session cookie is preferred over browser-stored bearer tokens if first-party authentication is selected.
-- Authorization is checked on every project-scoped command/query.
-- Use parameterized database access and schema migrations.
-- CSRF protection is required for cookie-authenticated writes; configure restrictive CORS.
-- Secrets come from environment/runtime secret injection and are never committed.
-- Structured logs use correlation IDs and exclude scope descriptions and AI evidence by default.
-- Health endpoints distinguish liveness from database readiness.
-- Backup/restore ownership and production observability are unresolved.
-
-## 11. Architecture decisions required before code
-
-See U-01 through U-11 in [V1_SCOPE.md](V1_SCOPE.md). Also select the Python/Node versions, package managers, ORM/migration library, frontend build/test stack, authentication approach, and API versioning policy. Library choices must be free/open-source and recorded in short ADRs when selected.
-
+## 12. Architecture decision records
+Before implementation, record short decisions for compatible runtime versions, package managers, auth/session approach, database driver, AI mode (or no AI), test tooling and local run commands. Prefer reversible decisions and explain the user need each supports.
