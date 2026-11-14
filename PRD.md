@@ -1,103 +1,105 @@
-# Product Requirements Document — ScopePilot V1.0
+# ScopePilot — Product Requirements Document
 
-## 1. Document status
+## Document status
+**Product direction:** Approved  
+**Delivery intent:** Portfolio demonstration / functional prototype  
+**Implementation status:** Not implied by this document  
+The approved decisions are consolidated in [DECISION_REGISTER.md](DECISION_REGISTER.md). This PRD translates them into the product narrative and V1 requirements.
 
-This is a Phase 0 baseline. The repository contained no prior product artifacts or implementation at preparation time. Requirements explicitly stated in the project brief are **Approved**. The product definition and detailed behavior below are **Proposed** or **Unresolved** as labeled.
+## 1. Product overview
+ScopePilot is an AI-assisted Project Delivery Intelligence platform for small software and digital agencies. It helps teams coordinate client expectations, requirements, delivery work and scope changes. Its central value is making the likely consequences of a proposed change visible before people commit to it.
 
-## 2. Product hypothesis — Unresolved
+ScopePilot is a portfolio demonstration of product thinking and product execution. It is not intended to be a production-ready commercial service. Use fictional data, free/local-first tooling and a deliberately limited feature set.
 
-ScopePilot is assumed to help a delivery team:
+## 2. Problem
+Small delivery teams coordinate clients, developers and managers through fragmented documents and conversations. Requirements can be unclear, work can become blocked, and proposed changes can affect dependencies, workload and delivery dates. Without a shared view of commitments and evidence, teams may agree to changes without understanding the trade-offs.
 
-1. describe a project's scope as structured items;
-2. establish a human-approved baseline;
-3. calculate a deterministic estimate and summary from that baseline;
-4. model a proposed scope change without mutating the baseline;
-5. calculate and explain the change's impact; and
-6. require a human to approve or reject the change.
+## 3. Product hypothesis
+If small agencies can maintain clear requirements, tasks, dependencies and approved baselines—and assess the likely effort, schedule, capacity and risk implications of proposed changes—then teams and clients can make more informed decisions and reduce avoidable misunderstandings.
 
-This definition is plausible from the name and guardrails, but is not evidenced by repository content. Product ownership must confirm or replace it before feature implementation.
+## 4. Users and roles
+- **Owner/Admin:** oversees workspace, project commitments, business approvals and delivery risks.
+- **Team Leader:** reviews requirements, technical feasibility, estimates, dependencies, workload, blockers and change impact.
+- **Developer/Member:** works on assigned tasks, updates progress/actual effort, raises clarification requests and reports blockers or workload concerns.
+- **Client:** views agreed project information, submits requirements/change requests, discusses them and confirms changes to their agreement.
+- **Viewer:** reads authorized workspace/project information.
 
-## 3. Problem statement — Proposed
+Workspace roles are Owner, Admin, Member and Viewer. Client access is a separate project-level permission. Team Leader is a project responsibility, not automatically synonymous with Admin. See the decision register for approval boundaries.
 
-Project scope and estimates often drift across documents and conversations. Teams need one traceable representation of what was approved, what is proposed, and what deterministic effect a change has. Explanations may improve comprehension, but neither generated text nor an automated agent should silently change a commitment.
+## 5. Product goals
+1. Give the team and client a shared view of approved requirements and delivery progress.
+2. Make project work traceable from requirements to tasks, dependencies, releases and closure.
+3. Show evidence-based delivery risks and capacity conflicts.
+4. Assess proposed scope changes before approval.
+5. Preserve immutable baselines and an auditable decision history.
+6. Demonstrate how AI can explain grounded findings without taking authority away from people.
 
-## 4. Goals
+## 6. Core experience
+1. Create a workspace and project, or open the seeded demo.
+2. Capture client requirements and resolve ambiguity.
+3. Translate approved requirements into tasks, estimates and dependencies.
+4. Establish an approved baseline.
+5. Track work, actual effort, milestones, blockers, workload and delivery risks.
+6. Submit a change request and inspect its impact on effort, schedule, dependencies, capacity and commitments.
+7. Obtain required technical/business approvals and client confirmation when their agreement changes.
+8. Create a new baseline only after approval.
+9. Track releases, acceptance, post-deployment issues and project closure.
 
-### Approved
+## 7. Functional requirements
 
-- Use authoritative deterministic calculations.
-- Restrict AI to explanations grounded in calculated findings.
-- Require human approval for consequential changes.
-- Deliver with a React/TypeScript frontend, FastAPI backend, and PostgreSQL in a modular monolith.
-- Depend on no paid product or infrastructure service.
-
-### Proposed
-
-- Make baseline versus proposed scope visually and semantically distinct.
-- Preserve an auditable history of approvals and rejections.
-- Make every impact result reproducible from stored inputs and a versioned rule set.
-- Allow the core product to function when AI is disabled or unavailable.
-
-## 5. Personas — Unresolved
-
-The proposed roles are:
-
-- **Editor**: creates projects, edits draft scope, and submits baselines or changes.
-- **Approver**: approves/rejects baselines and change requests.
-- **Viewer**: reads projects, findings, and history.
-
-Whether one person may hold multiple roles, and whether V1.0 needs real authorization rather than attribution only, remain unresolved.
-
-## 6. Functional requirements
-
-| ID | Requirement | Status |
+| ID | Requirement | Priority |
 |---|---|---|
-| FR-01 | Create and update a project record. | Proposed |
-| FR-02 | Add, edit, order, and remove scope items while the scope is a draft. | Proposed |
-| FR-03 | Validate all inputs used by calculations. | Proposed |
-| FR-04 | Calculate totals and summaries deterministically on the backend. | Approved principle; formula unresolved |
-| FR-05 | Submit a draft baseline for approval and approve or reject it explicitly. | Proposed |
-| FR-06 | Freeze an immutable snapshot when a baseline is approved. | Proposed |
-| FR-07 | Create a change request against one approved baseline without changing that baseline. | Proposed |
-| FR-08 | Present a field-level diff and deterministic impact findings. | Proposed |
-| FR-09 | Approve or reject a change request and record actor, time, and rationale. | Approved principle; workflow proposed |
-| FR-10 | On approval, create a new baseline version atomically. | Proposed |
-| FR-11 | Optionally request a plain-language explanation derived only from stored inputs and findings. | Approved constraint; provider/availability unresolved |
-| FR-12 | Clearly label AI output as explanatory and non-authoritative. | Proposed |
-| FR-13 | View baseline and change history. | Proposed |
+| FR-01 | Workspace, project and role-aware access for the demo. | Must |
+| FR-02 | Capture requirements with status, owner/source and clarification discussion. | Must |
+| FR-03 | Link requirements to tasks; support task status, primary assignee and actual effort. | Must |
+| FR-04 | Support Finish-to-Start dependencies and detect invalid/circular dependencies. | Must |
+| FR-05 | Estimate task effort using PERT (O, M, P) and person-hours. | Must |
+| FR-06 | Calculate schedule projections using dependencies and workspace calendar. | Must |
+| FR-07 | Track milestones, target dates, workload and evidence-backed delivery risks. | Must |
+| FR-08 | Create change requests and show affected requirements, tasks and dependencies. | Must |
+| FR-09 | Show potential effort, schedule, capacity and commitment impact before approval. | Must |
+| FR-10 | Enforce the appropriate technical, business and client-confirmation workflow. | Must |
+| FR-11 | Preserve immutable baseline versions and decision/audit history. | Must |
+| FR-12 | Provide role-aware dashboards and project views, including client view. | Must |
+| FR-13 | Support contextual discussions and in-app notifications. | Should |
+| FR-14 | Support employee assistance/blocker reports and escalation. | Should |
+| FR-15 | Provide release tracking, acceptance and simplified closure. | Should |
+| FR-16 | Provide a centralized risk register linked to project work. | Should |
+| FR-17 | Offer optional AI explanations/summaries/recommendations grounded in project evidence. | Should |
+| FR-18 | Show illustrative product KPIs using clearly labelled simulated data. | Must |
 
-## 7. Non-functional requirements
+## 8. Non-functional and product guardrails
+- Deterministic backend calculations are authoritative; AI is optional and advisory.
+- Every important finding should show the evidence or entities that support it.
+- Distinguish confirmed facts, calculated projections and AI suggestions.
+- No AI approval, baseline mutation, automatic reassignment or autonomous deadline change.
+- Core workflows function when AI is unavailable.
+- Preserve approved baseline history and audit consequential actions.
+- Enforce workspace, project, client and internal-discussion visibility boundaries.
+- Keep the architecture a free/local-first modular monolith; no unnecessary distributed infrastructure.
+- Use fictional/demo data and clearly label it.
+- Prioritize understandable workflows and a credible product story over production hardening.
 
-- **Correctness:** decimal/numeric calculations use defined rounding and never binary floating point for authoritative stored values.
-- **Traceability:** an impact result records its input snapshot, rule-set version, and calculation time.
-- **Integrity:** state transitions and their audit event commit in one database transaction.
-- **Security:** validate at the API boundary; do not expose secrets or model credentials to the browser.
-- **Accessibility:** proposed target is WCAG 2.2 AA for core journeys; confirmation required.
-- **Performance:** no numeric target is approved. Proposed local target is p95 under 500 ms for non-AI API reads at expected V1 scale; scale itself is unresolved.
-- **Availability:** the deterministic workflow remains usable without AI.
-- **Privacy:** do not send project content to an AI provider without an approved provider, policy, and user action.
+## 9. Success measures
+Use illustrative demo KPIs, not claimed customer outcomes:
+- Scope-change assessment time.
+- Requirement clarification rate.
+- Change approval cycle time.
+- Delivery impact visibility.
+- Baseline change traceability.
+- Client–team alignment.
 
-## 8. Success measures — Unresolved
+Define each KPI's numerator, denominator, time window and data source during UX/data design. Do not invent measured results.
 
-Instrumentation and targets require owner approval. Candidate measures are:
+## 10. Flagship demo
+A fictional digital agency builds an e-commerce website. The demo moves from requirement clarification and baseline approval through task planning, a mid-development change request, impact assessment, approvals, revised baseline, release/deployment, client acceptance and a post-deployment defect or enhancement. Dashboard KPIs use simulated activity from this scenario.
 
-- percentage of proposed changes with a computed impact before approval;
-- percentage of approvals with complete attribution and rationale;
-- calculation reproducibility across repeated runs;
-- time from change creation to an informed decision;
-- frequency of AI explanations rejected as inconsistent with findings (target should be zero, with feedback mechanism still unresolved).
+## 11. Out of scope
+Commercial billing/subscriptions, native mobile, enterprise SSO, autonomous agents, custom model training, microservices/Kubernetes, advanced predictive forecasting, general-purpose chat, social features, complex workforce management, paid integrations/services and production-scale operations.
 
-## 9. Risks and mitigations
-
-| Risk | Mitigation |
-|---|---|
-| Product intent differs from the hypothesis. | Confirm the product definition before feature work. |
-| Estimate formula is treated as obvious and later changes. | Approve a formula specification and version it before implementing calculations. |
-| AI introduces unsupported claims. | Build explanations from an allow-listed evidence payload; validate references; make AI optional. |
-| Approval semantics are ambiguous. | Define roles, self-approval, concurrency, and effective-date rules first. |
-| Premature infrastructure increases cost and maintenance. | One deployable backend, one frontend, one PostgreSQL database; no queue/cache/vector DB by default. |
-
-## 10. Acceptance for Phase 0
-
-Phase 0 is complete when these documents are reviewed, contradictions are resolved, and release-blocking unresolved decisions have named answers. Documentation completion alone does not approve proposed requirements.
-
+## 12. Risks
+- **Scope expansion:** maintain Must/Should boundaries and one flagship scenario.
+- **Misleading impact estimates:** label projections, expose assumptions and show evidence.
+- **AI hallucinations:** constrain AI to supplied evidence; retain deterministic fallback.
+- **Confusing approval authority:** show separate technical, business and client confirmation steps.
+- **Overengineering:** prefer the simplest free/local approach that supports the demo.
