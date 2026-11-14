@@ -1,59 +1,39 @@
 # ScopePilot
 
-ScopePilot is in **Phase 0: product and architecture definition**. No application has been implemented yet.
+**ScopePilot** is an AI-assisted Project Delivery Intelligence platform concept for small software and digital agencies. It helps teams manage requirements, tasks, dependencies, delivery risks and scope changes—and understand the potential impact of a change before committing to it.
 
-The working V1.0 product hypothesis is a single-team workspace for turning a structured project scope into a deterministic baseline, comparing proposed changes against that baseline, and presenting grounded impact findings for human approval. This hypothesis requires product-owner confirmation; the source repository was empty when these documents were created.
+> **Project intent:** ScopePilot is a Product Management portfolio demonstration and functional prototype. It is not a production-ready commercial product. The project is designed to demonstrate product discovery, user understanding, strategy, prioritization, requirements, workflows, UX decisions, metrics and trade-offs.
 
-## Status vocabulary
+## Why this product?
+When client expectations change during delivery, teams need to understand which requirements, tasks, dependencies, workloads and delivery commitments may be affected. ScopePilot makes those relationships visible and supports evidence-based human decisions.
 
-- **Approved**: explicitly required by the project brief.
-- **Proposed**: a reversible default chosen to make the design concrete; it is not an approved product decision.
-- **Unresolved**: a material decision that must be answered before the affected implementation begins.
+## Flagship demonstration
+A fictional digital agency builds an e-commerce website for a client. The demo follows requirements and clarification, task planning, baseline approval, a mid-project scope change, impact assessment, technical/business/client approvals, revised baseline, release and post-deployment follow-up.
 
-## Phase 0 documents
-
-| Document | Purpose |
-|---|---|
-| [PRD.md](PRD.md) | Product intent, users, requirements, success measures, and risks |
-| [V1_SCOPE.md](V1_SCOPE.md) | V1.0 inclusions, exclusions, and release boundary |
-| [USER_JOURNEYS.md](USER_JOURNEYS.md) | Primary workflows and approval points |
-| [SYSTEM_DESIGN.md](SYSTEM_DESIGN.md) | Modular-monolith architecture and module boundaries |
-| [DATA_MODEL.md](DATA_MODEL.md) | Conceptual entities, relationships, and lifecycle |
-| [DOMAIN_RULES.md](DOMAIN_RULES.md) | Calculation, state, approval, and AI grounding rules |
-| [API_CONTRACT.md](API_CONTRACT.md) | Proposed HTTP API and error conventions |
-| [IMPLEMENTATION_PLAN.md](IMPLEMENTATION_PLAN.md) | Sequenced delivery plan and gates |
-| [DEVELOPMENT_SETUP.md](DEVELOPMENT_SETUP.md) | Proposed local development contract |
-
-## Approved technical guardrails
-
-- Modular monolith: React + TypeScript frontend, FastAPI backend, PostgreSQL database.
+## Product principles
 - Deterministic calculations are authoritative.
-- AI may explain grounded findings but may not create authoritative calculations or decisions.
-- Consequential changes require explicit human approval.
-- No paid dependencies or services.
-- Avoid infrastructure and abstractions that V1.0 does not need.
+- AI is optional, evidence-grounded and advisory.
+- Humans approve consequential changes.
+- Approved baselines remain versioned and immutable.
+- Client-visible and internal information are separated.
+- Simulated data is clearly labelled.
+- Free/local-first tools; no unnecessary production infrastructure.
 
-## Intended repository structure
+## Documentation
+- [Product Requirements Document](PRD.md)
+- [V1 Demonstration Scope](V1_SCOPE.md)
+- [Approved Decision Register](DECISION_REGISTER.md)
+- [User Journeys](USER_JOURNEYS.md)
+- [Domain Rules](DOMAIN_RULES.md)
+- [Data Model](DATA_MODEL.md)
+- [System Design](SYSTEM_DESIGN.md)
+- [API Contract](API_CONTRACT.md)
+- [Implementation Plan](IMPLEMENTATION_PLAN.md)
+- [Development Setup](DEVELOPMENT_SETUP.md)
 
-The following is the target structure for implementation. Phase 0 deliberately creates documentation only.
+## Current status
+**Product direction and 31 decision groups:** approved and consolidated in the decision register.  
+**Design/prototype/implementation:** separate future stages; documentation approval does not mean features are built or tested.
 
-```text
-ScopePilot/
-├── frontend/               # React + TypeScript application (future)
-├── backend/                # FastAPI modular monolith (future)
-│   ├── app/
-│   │   ├── api/            # HTTP transport
-│   │   ├── modules/        # Domain/application modules
-│   │   ├── infrastructure/ # Database and external adapters
-│   │   └── main.py
-│   └── tests/
-├── docs/                   # ADRs and later operational docs (future)
-└── <Phase 0 documents>
-```
-
-Empty implementation directories are not committed. They should be introduced by the first approved implementation change together with their build configuration and tests.
-
-## Before implementation
-
-Resolve the release-blocking decisions collected in [V1_SCOPE.md](V1_SCOPE.md#unresolved-release-decisions), especially the product definition, tenancy/authentication model, estimate unit and formula, change-impact rules, and AI availability. Do not interpret a proposed default as product approval.
-
+## Working principle
+Build the smallest coherent demonstration that proves the core story: requirement → task/dependency plan → approved baseline → proposed change → impact assessment → human approval → revised baseline. Add secondary capabilities only when they strengthen that story.
