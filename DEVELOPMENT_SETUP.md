@@ -1,84 +1,62 @@
-# Development Setup
+# ScopePilot — Development Setup
 
 ## Current state
+The repository currently contains product and technical documentation. The application, dependency manifests, database migrations, container configuration and test suites have not yet been created. The instructions below define the intended setup direction; they are not commands that can be run today.
 
-The repository contains Phase 0 documentation only. There is no application, dependency manifest, container definition, migration, or test suite to run. The commands below are a **Proposed setup contract**, not currently executable instructions.
+## Intended stack
+- React, TypeScript, Vite, Tailwind CSS and shadcn/ui.
+- Python and FastAPI with Pydantic and SQLAlchemy.
+- PostgreSQL and Alembic.
+- Docker Compose for local services where useful.
+- pytest, Vitest, React Testing Library and Playwright where proportionate.
 
-## Proposed prerequisites
+All dependencies must be free/open-source. Pin compatible runtime and package-manager versions when Stage 4 begins. Review licenses before adoption.
 
-- Git
-- A supported Node.js LTS release and a single locked package manager (versions unresolved)
-- A supported Python release and a single locked environment/dependency tool (versions unresolved)
-- PostgreSQL (version unresolved)
-- Optional Docker Engine with Compose for local PostgreSQL
+## Prerequisites (to be pinned later)
+- Git.
+- Supported Node.js LTS version and one locked package manager.
+- Supported Python version and one locked dependency/environment tool.
+- PostgreSQL, locally installed or through Docker Compose.
+- Docker Engine with Compose, optional if PostgreSQL is installed directly.
 
-Exact versions must be pinned when Phase 1 begins. All selected dependencies must be free/open-source; their licenses should be reviewed.
+## Configuration approach
+Create a committed .env.example with variable names and safe local examples only. Keep actual secrets in ignored local environment files. Expected settings may include:
+- APP_ENV
+- DATABASE_URL
+- FRONTEND_ORIGIN
+- SESSION_SECRET
+- AI_EXPLANATIONS_ENABLED=false
 
-## Proposed configuration
+Exact names and formats must match the implementation. Do not add external AI credentials unless an optional provider is explicitly selected. Never store Gmail passwords or commit secrets.
 
-Commit a `.env.example` containing names and safe examples only. Local secrets belong in ignored files. Candidate variables:
-
-```dotenv
-APP_ENV=development
-DATABASE_URL=postgresql+<driver>://scopepilot:local-only@localhost:5432/scopepilot
-FRONTEND_ORIGIN=http://localhost:<port>
-AI_EXPLANATIONS_ENABLED=false
-```
-
-Driver and ports are intentionally unspecified. AI provider variables must not be introduced until U-09 is approved. The backend should fail fast on missing required configuration and never silently use production-like defaults.
-
-## Proposed developer workflow
-
-Once Phase 1 tooling exists, the documented workflow should provide stable commands for:
-
+## Intended local workflow
+Once the app exists, provide documented commands to:
 1. install locked frontend and backend dependencies;
-2. start PostgreSQL;
-3. apply migrations;
+2. start local PostgreSQL;
+3. apply reviewed Alembic migrations;
 4. start FastAPI and the frontend development server;
-5. run formatting checks, lint, static type checks, unit/integration tests, and end-to-end tests;
-6. stop local services without deleting database data by default.
+5. run formatting, lint, type checks and tests;
+6. load/reset fictional demo data;
+7. stop services without deleting data by default.
 
-Prefer project scripts or a small cross-platform task runner over a long collection of raw commands. Windows/PowerShell is a supported development environment unless the team decides otherwise.
+Prefer a small set of project scripts or cross-platform task runner commands. Windows/PowerShell should be supported.
 
-## Proposed local database rules
+## Database and demo-data rules
+- Use PostgreSQL for integration tests that depend on PostgreSQL behavior.
+- Use a separate test database and prevent tests from targeting production-like URLs.
+- Migrations own schema changes; application startup must not mutate schema opportunistically.
+- Seed fixtures are deterministic and entirely fictional.
+- Destructive reset is an explicit command that identifies and validates its target.
+- Preserve audit history and approved baseline snapshots within normal workflows.
 
-- Use PostgreSQL for integration tests that rely on PostgreSQL semantics.
-- Use a separate test database/schema and prevent tests from accepting a production connection string.
-- Migrations create schema; application startup does not mutate schema opportunistically.
-- Seed fixtures are deterministic and contain no real user/project data.
-- Destructive reset is an explicit command that prints/validates its target and is never part of ordinary startup.
+## Quality checks to establish
+Backend: formatter, linter, static type checking, unit tests, PostgreSQL integration tests and migration consistency.
 
-## Quality gates to establish in Phase 1
+Frontend: formatter/linter, strict TypeScript check, component tests, production build and critical end-to-end/accessibility checks.
 
-### Backend
+Repository: generated OpenAPI/client consistency, secret scanning and dependency/license review using free tooling.
 
-- formatter and linter;
-- static type checker;
-- unit and PostgreSQL integration tests with coverage reported but no arbitrary coverage claim;
-- migration consistency check;
-- dependency vulnerability/license review using free tooling.
+Select exact tool names and versions in short architecture decision records rather than prematurely fixing them here.
 
-### Frontend
-
-- formatter/linter;
-- TypeScript strict type check;
-- component/unit tests;
-- production build;
-- critical end-to-end and accessibility checks.
-
-### Repository
-
-- generated OpenAPI drift check and generated client/type check;
-- secret scanning and dependency update policy using free tooling;
-- no required paid CI actions or services.
-
-Tool names should be selected in ADRs instead of being prematurely fixed here.
-
-## Troubleshooting contract — Proposed
-
-Future setup documentation must cover port conflicts, database readiness, migration mismatch, clean dependency reinstall, test-database safety, and AI-disabled behavior. Any command that deletes volumes or data must explicitly warn the user and identify the exact target.
-
-## Not yet available
-
-There is currently no valid `npm`, Python, Docker, migration, build, lint, type-check, or test command in this repository. Do not infer project health from the documentation checks performed during Phase 0.
-
+## Current limitations
+There is no valid npm, Python, Docker, migration, build, lint, type-check or test command in the repository yet. Do not infer application health or feature completion from documentation updates. The next product milestone after documentation alignment is UX structure and wireframes; implementation follows the clickable prototype plan.
